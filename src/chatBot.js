@@ -1,10 +1,48 @@
 import React, { useState } from "react";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Box,
+  TextField,
+  IconButton,
+  Avatar,
+  List,
+  ListItem,
+  ListItemText,
+  CircularProgress,
+  Paper,
+  Drawer,
+  Divider,
+  ListItemIcon,
+  useMediaQuery,
+  CssBaseline,
+  Menu,
+  MenuItem,
+  Container,
+  ListSubheader,
+  Button,
+} from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
+import MenuIcon from "@mui/icons-material/Menu";
+import HomeIcon from "@mui/icons-material/Home";
+import SettingsIcon from "@mui/icons-material/Settings";
+import InfoIcon from "@mui/icons-material/Info";
+import PersonIcon from "@mui/icons-material/Person";
+import { useTheme } from "@mui/material/styles";
 import "./ChatApp.css";
+import { ArrowUpward, ArrowUpwardOutlined, Share } from "@mui/icons-material";
+import ExploreOutlined from "@mui/icons-material/ExploreOutlined";
+import Assistant from "@mui/icons-material/Assistant";
+import ChatComponent from "./MessageContent";
+import DrawerComponent from "./DrawerContent";
 
-const BOT_API_URL = "http://localhost:8080/generate"; 
-const DB_BOT_URL="http://localhost:8080/get-response"
-const BOT_IMG = "https://www.simplilearn.com/ice9/free_resources_article_thumb/Types_of_Artificial_Intelligence.jpg";
-const PERSON_IMG = "https://www.shutterstock.com/image-photo/young-handsome-man-beard-wearing-260nw-1768126784.jpg";
+const drawerWidth = 240;
+const BOT_API_URL = "http://localhost:8080/generate";
+const BOT_IMG =
+  "https://www.simplilearn.com/ice9/free_resources_article_thumb/Types_of_Artificial_Intelligence.jpg";
+const PERSON_IMG =
+  "https://www.shutterstock.com/image-photo/young-handsome-man-beard-wearing-260nw-1768126784.jpg";
 const BOT_NAME = "KAR AI CHAT";
 const PERSON_NAME = "Hariharan";
 
@@ -15,12 +53,28 @@ function ChatApp() {
       img: BOT_IMG,
       side: "left",
       text: "Hi, welcome to KAR AI CHAT! Go ahead and send me a message. 😄",
-      time: formatDate(new Date())
-    }
+      time: formatDate(new Date()),
+    },
   ]);
-
   const [inputValue, setInputValue] = useState("");
   const [isBotTyping, setIsBotTyping] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [menuAnchor, setMenuAnchor] = useState(null); // Anchor for the menu
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const toggleDrawer = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const handleMenuOpen = (event) => {
+    setMenuAnchor(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchor(null);
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -31,14 +85,14 @@ function ChatApp() {
       img: PERSON_IMG,
       side: "right",
       text: inputValue,
-      time: formatDate(new Date())
+      time: formatDate(new Date()),
     };
 
     setMessages([...messages, userMessage]);
     setInputValue("");
 
     setTimeout(() => {
-      botResponse(userMessage.text); 
+      botResponse(userMessage.text);
     }, 1000);
   };
 
@@ -46,7 +100,9 @@ function ChatApp() {
     setIsBotTyping(true);
     fetchBotResponse(userMessageText)
       .then((botMessage) => {
-        const message = botMessage || "Sorry, I didn't understand that. Can you ask in a different way?";
+        const message =
+          botMessage ||
+          "Sorry, I didn't understand that. Can you ask in a different way?";
         setMessages((prevMessages) => [
           ...prevMessages,
           {
@@ -74,7 +130,7 @@ function ChatApp() {
         setIsBotTyping(false);
       });
   };
-  
+
   const fetchBotResponse = async (userMessageText) => {
     try {
       const response = await fetch(BOT_API_URL, {
@@ -82,84 +138,128 @@ function ChatApp() {
         headers: {
           "Content-Type": "application/json",
         },
-       
-        body: JSON.stringify({ prompt: userMessageText }), 
+        body: JSON.stringify({ prompt: userMessageText }),
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to fetch bot response");
       }
-  
+
       const data = await response.json();
-      return data.response; 
+      return data.response;
     } catch (error) {
       console.error("Failed to fetch bot message:", error);
       return null;
     }
   };
-  
-return (
-    <div className="msger">
-      <header className="msger-header">
-        <div className="msger-header-title">
-          <i className="fas fa-comment-alt"></i> Kar AI chat
-        </div>
-        <div className="msger-header-options">
-          <span><i className="fas fa-cog"></i></span>
-        </div>
-      </header>
 
-      <main className="msger-chat">
-        {messages.map((msg, index) => (
-          <div key={index} className={`msg ${msg.side}-msg`}>
-            <div className="msg-img" style={{ backgroundImage: `url(${msg.img})` }}></div>
-            <div className="msg-bubble">
-              <div className="msg-info">
-                <div className="msg-info-name">{msg.name}</div>
-                <div className="msg-info-time">{msg.time}</div>
-              </div>
-              {msg.text.replace(/[#!&*-:,/`]/g, "").split('\n').map((line, index) => (
-    <div key={index}  style={{
-        textAlign:"start"
-    }}>{line}</div>
-  ))}
-            </div>
-          </div>
-        ))}
+  return (
+    <Box display="flex">
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        sx={{ zIndex: 1, backgroundColor: "white" }}
+        elevation={0.8}
+      >
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            edge="start"
+            onClick={toggleDrawer}
+            sx={{ mr: 2, display: { sm: "none" }, color: "gray" }}
+          >
+            <MenuIcon />
+          </IconButton>
 
-        {isBotTyping && (
-          <div className="msg left-msg">
-            <div className="msg-img" style={{ backgroundImage: `url(${BOT_IMG})` }}></div>
-            <div className="msg-bubble">
-              <div className="msg-info">
-                <div className="msg-info-name">{BOT_NAME}</div>
-                <div className="msg-info-time">{formatDate(new Date())}</div>
-              </div>
-              <div className="msg-text">Typing...</div>
-            </div>
-          </div>
-        )}
-      </main>
+          <Button
+            variant="outlined"
+            sx={{
+              borderColor: "gray",
+              color: "gray",
+              textTransform: "none",
+              ml: { xs: 20, sm: 30 },
+            }}
+            onClick={() => console.log("KaraiGPT button clicked")}
+          >
+            KaraiGPT
+          </Button>
 
-      <form className="msger-inputarea" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          className="msger-input"
-          placeholder="Message to Kar ai chat"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{
+              flexGrow: 1,
+              display: {
+                sm: "none",
+                lg: "flex",
+                md: "flex",
+                xl: "flex",
+                xs: "none",
+              },
+            }}
+          >
+            Chat Application
+          </Typography>
+
+          <IconButton
+            color="inherit"
+            sx={{
+              ml: { xs: 10, sm: 30 },
+            }}
+          >
+            <Avatar sx={{ bgcolor: "red" }}>{PERSON_NAME[0]}</Avatar>
+          </IconButton>
+          <Menu
+            anchorEl={menuAnchor}
+            open={Boolean(menuAnchor)}
+            onClose={handleMenuClose}
+            keepMounted
+          >
+            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+            <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+          </Menu>
+        </Toolbar>
+      </AppBar>
+
+      <Box component="nav">
+        <Drawer
+          variant={isMobile ? "temporary" : "permanent"}
+          open={mobileOpen}
+          onClose={toggleDrawer}
+          sx={{
+            "& .MuiDrawer-paper": {
+              width: drawerWidth,
+              boxSizing: "border-box",
+            },
+          }}
+        >
+          <DrawerComponent />
+        </Drawer>
+      </Box>
+
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          marginLeft: { sm: `${drawerWidth}px` },
+          marginTop: { xs: 7, sm: 8 },
+          padding: 2,
+        }}
+      >
+        <ChatComponent
+          messages={messages}
+          inputValue={inputValue}
+          isBotTyping={isBotTyping}
+          setInputValue={setInputValue}
+          handleSubmit={handleSubmit}
         />
-        <button type="submit" className="msger-send-btn">Send</button>
-      </form>
-    </div>
+      </Box>
+    </Box>
   );
 }
 
-
-function formatDate(date) {
-  const h = "0" + date.getHours();
-  const m = "0" + date.getMinutes();
-  return `${h.slice(-2)}:${m.slice(-2)}`;
-}
+const formatDate = (date) => {
+  return `${date.getHours()}:${date.getMinutes()}`;
+};
 
 export default ChatApp;
