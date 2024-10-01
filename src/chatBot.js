@@ -4,43 +4,39 @@ import {
   Toolbar,
   Typography,
   Box,
-  TextField,
   IconButton,
   Avatar,
-  List,
-  ListItem,
-  ListItemText,
-  CircularProgress,
-  Paper,
   Drawer,
-  Divider,
-  ListItemIcon,
-  useMediaQuery,
   CssBaseline,
   Menu,
   MenuItem,
-  Container,
-  ListSubheader,
   Button,
+  useMediaQuery,
+  ListItemIcon,
+  ListItemText,
+  Divider,
 } from "@mui/material";
-import SendIcon from "@mui/icons-material/Send";
 import MenuIcon from "@mui/icons-material/Menu";
-import HomeIcon from "@mui/icons-material/Home";
-import SettingsIcon from "@mui/icons-material/Settings";
-import InfoIcon from "@mui/icons-material/Info";
-import PersonIcon from "@mui/icons-material/Person";
 import { useTheme } from "@mui/material/styles";
+import logo from "../src/logo1.png";
 import "./ChatApp.css";
-import { ArrowUpward, ArrowUpwardOutlined, Share } from "@mui/icons-material";
-import ExploreOutlined from "@mui/icons-material/ExploreOutlined";
-import Assistant from "@mui/icons-material/Assistant";
 import ChatComponent from "./MessageContent";
 import DrawerComponent from "./DrawerContent";
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import Logout from "@mui/icons-material/Logout";
+import {
+  AccountCircleOutlined,
+  AccountCircleRounded,
+  LoginOutlined,
+} from "@mui/icons-material";
+import Settings from "@mui/icons-material/Settings";
+import Psychology from "@mui/icons-material/Psychology";
+import Build from "@mui/icons-material/Build";
+import LogoutOutlined from "@mui/icons-material/LogoutOutlined";
 
 const drawerWidth = 240;
 const BOT_API_URL = "http://localhost:8080/generate";
-const BOT_IMG =
-  "https://www.simplilearn.com/ice9/free_resources_article_thumb/Types_of_Artificial_Intelligence.jpg";
+const BOT_IMG =logo
 const PERSON_IMG =
   "https://www.shutterstock.com/image-photo/young-handsome-man-beard-wearing-260nw-1768126784.jpg";
 const BOT_NAME = "KAR AI CHAT";
@@ -59,10 +55,11 @@ function ChatApp() {
   const [inputValue, setInputValue] = useState("");
   const [isBotTyping, setIsBotTyping] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [menuAnchor, setMenuAnchor] = useState(null); // Anchor for the menu
+  const [menuAnchor, setMenuAnchor] = useState(null);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
 
   const toggleDrawer = () => {
     setMobileOpen(!mobileOpen);
@@ -154,11 +151,11 @@ function ChatApp() {
   };
 
   return (
-    <Box display="flex">
+    <Box display="flex" flexDirection="column" height="100vh">
       <CssBaseline />
       <AppBar
         position="fixed"
-        sx={{ zIndex: 1, backgroundColor: "white" }}
+        sx={{ zIndex: theme.zIndex.drawer + 0, backgroundColor: "white" }}
         elevation={0.8}
       >
         <Toolbar>
@@ -166,7 +163,11 @@ function ChatApp() {
             color="inherit"
             edge="start"
             onClick={toggleDrawer}
-            sx={{ mr: 2, display: { sm: "none" }, color: "gray" }}
+            sx={{
+              mr: 2,
+              display: { lg: "none", xl: "none", md: "block" },
+              color: "gray",
+            }}
           >
             <MenuIcon />
           </IconButton>
@@ -174,14 +175,17 @@ function ChatApp() {
           <Button
             variant="outlined"
             sx={{
-              borderColor: "gray",
+              borderColor: "none",
+              border: "none",
               color: "gray",
               textTransform: "none",
-              ml: { xs: 20, sm: 30 },
+              fontWeight: "bold",
+              fontSize: { xs: "16px", sm: "20px" },
+              ml: { xs: 10, sm: 30 },
             }}
             onClick={() => console.log("KaraiGPT button clicked")}
           >
-            KaraiGPT
+            Karai ChatBot
           </Button>
 
           <Typography
@@ -189,12 +193,10 @@ function ChatApp() {
             component="div"
             sx={{
               flexGrow: 1,
+              textAlign: "center",
               display: {
-                sm: "none",
-                lg: "flex",
-                md: "flex",
-                xl: "flex",
                 xs: "none",
+                sm: "flex",
               },
             }}
           >
@@ -202,9 +204,10 @@ function ChatApp() {
           </Typography>
 
           <IconButton
+            onClick={handleMenuOpen}
             color="inherit"
             sx={{
-              ml: { xs: 10, sm: 30 },
+              ml: { xs: 13, sm: "0px", xl: "0px" },
             }}
           >
             <Avatar sx={{ bgcolor: "red" }}>{PERSON_NAME[0]}</Avatar>
@@ -214,36 +217,96 @@ function ChatApp() {
             open={Boolean(menuAnchor)}
             onClose={handleMenuClose}
             keepMounted
+            sx={{
+              "& .MuiPaper-root": {
+                borderRadius: "8px", // Adds slight border-radius to the dropdown
+                borderBottom: "2px solid grey", // Border bottom with grey color
+              },
+            }}
           >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+            <MenuItem onClick={handleMenuClose}>
+              <ListItemIcon>
+                <AccountCircleOutlined fontSize="small" />
+              </ListItemIcon>
+              <ListItemText primary="Profile" />
+            </MenuItem>
+            <Divider />
+            <MenuItem onClick={handleMenuClose}>
+              <ListItemIcon>
+                <Build fontSize="small" />
+              </ListItemIcon>
+              <ListItemText primary="Customize GPT" />
+            </MenuItem>
+            <Divider />
+
+            <MenuItem onClick={handleMenuClose}>
+              <ListItemIcon>
+                <Settings fontSize="small" />
+              </ListItemIcon>
+              <ListItemText primary="Settings" />
+            </MenuItem>
+            <Divider />
+
+            <MenuItem onClick={handleMenuClose}>
+              <ListItemIcon>
+                <Psychology fontSize="small" />
+              </ListItemIcon>
+              <ListItemText primary="My GPT" />
+            </MenuItem>
+            <Divider />
+
+            <MenuItem onClick={handleMenuClose}>
+              <ListItemIcon>
+                <LogoutOutlined fontSize="small" />
+              </ListItemIcon>
+              <ListItemText primary="Logout" />
+            </MenuItem>
           </Menu>
         </Toolbar>
       </AppBar>
 
       <Box component="nav">
-        <Drawer
-          variant={isMobile ? "temporary" : "permanent"}
-          open={mobileOpen}
-          onClose={toggleDrawer}
-          sx={{
-            "& .MuiDrawer-paper": {
-              width: drawerWidth,
-              boxSizing: "border-box",
-            },
-          }}
-        >
-          <DrawerComponent />
-        </Drawer>
+        {isLargeScreen && (
+          <Drawer
+            variant="permanent"
+            sx={{
+              "& .MuiDrawer-paper": {
+                width: drawerWidth,
+                boxSizing: "border-box",
+              },
+            }}
+          >
+            <DrawerComponent />
+          </Drawer>
+        )}
+        {!isLargeScreen && (
+          <Drawer
+            variant="temporary"
+            open={mobileOpen}
+            onClose={toggleDrawer}
+            sx={{
+              "& .MuiDrawer-paper": {
+                width: drawerWidth,
+                boxSizing: "border-box",
+              },
+            }}
+          >
+            <DrawerComponent />
+          </Drawer>
+        )}
       </Box>
 
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          marginLeft: { sm: `${drawerWidth}px` },
+          marginLeft: { lg: `${drawerWidth}px` },
           marginTop: { xs: 7, sm: 8 },
           padding: 2,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
         <ChatComponent

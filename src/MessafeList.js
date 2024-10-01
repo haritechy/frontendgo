@@ -10,11 +10,24 @@ function MessageList({ messages, isBotTyping }) {
           <div style={{ display: "flex", alignItems: "center", flexDirection: msg.side === "right" ? "row-reverse" : "row" }}>
             <Avatar alt={msg.name} src={msg.img} sx={{ marginRight: msg.side === "left" ? 2 : 0, marginLeft: msg.side === "right" ? 2 : 0 }} />
             <Paper elevation={3} sx={{ bgcolor: msg.side === "right" ? "#e0f7fa" : "#f1f1f1", p: 2, borderRadius: 2, maxWidth: "70%" }}>
-              <ListItemText
-                primary={msg.name}
-                secondary={msg.text}
-                primaryTypographyProps={{ fontWeight: "bold", textAlign: msg.side === "right" ? "right" : "left" }}
-              />
+            <ListItemText
+  primary={msg.name}
+  primaryTypographyProps={{
+    fontWeight: "bold",
+    textAlign: msg.side === "right" ? "right" : "left"
+  }}
+  secondary={
+    msg.text
+      .replace(/[#!&*-:,/`]/g, "") 
+      .split('\n')
+      .map((line, index) => (
+        <div key={index} style={{ textAlign: "start" }}>
+          {line}
+        </div>
+      ))
+  }
+/>
+
               <Typography variant="caption" color="textSecondary" sx={{ textAlign: msg.side === "right" ? "right" : "left" }}>
                 {msg.time}
               </Typography>

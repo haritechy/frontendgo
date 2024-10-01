@@ -30,7 +30,16 @@ const historyData = {
 
 const DrawerComponent = () => {
   return (
-    <Box sx={{ width: drawerWidth, overflow: "auto" }}>
+    <Box
+      sx={{
+        width: { xs: drawerWidth, sm: drawerWidth }, 
+        height: "100vh",
+        overflowX: "hidden",
+        overflowY: "scroll",
+        position: "fixed", 
+        display: { xs: "block", sm: "block" }, 
+      }}
+    >
       <List sx={{ marginTop: 4 }}>
         <ListItem
           button
@@ -61,7 +70,10 @@ const DrawerComponent = () => {
           <ListItemIcon>
             <Assistant />
           </ListItemIcon>
-          <ListItemText primary="KAR AI" primaryTypographyProps={{ fontSize: "14px" }} />
+          <ListItemText
+            primary="KAR AI"
+            primaryTypographyProps={{ fontSize: "14px" }}
+          />
         </ListItem>
       </List>
       <Divider />
@@ -75,7 +87,10 @@ const DrawerComponent = () => {
             },
           }}
         >
-          <ListItemText primary="Today" primaryTypographyProps={{ fontSize: "13px" }} />
+          <ListItemText
+            primary="Today"
+            primaryTypographyProps={{ fontSize: "13px" }}
+          />
         </ListItem>
         <Divider />
         {historyData.today.map((item, index) => (
@@ -105,7 +120,10 @@ const DrawerComponent = () => {
             },
           }}
         >
-          <ListItemText primary="Previous 7 Days" primaryTypographyProps={{ fontSize: "13px" }} />
+          <ListItemText
+            primary="Previous 7 Days"
+            primaryTypographyProps={{ fontSize: "13px" }}
+          />
         </ListItem>
         {historyData.previous7Days.map((item, index) => (
           <ListItem
@@ -134,7 +152,10 @@ const DrawerComponent = () => {
             },
           }}
         >
-          <ListItemText primary="Last Week" primaryTypographyProps={{ fontSize: "13px" }} />
+          <ListItemText
+            primary="Last Week"
+            primaryTypographyProps={{ fontSize: "13px" }}
+          />
         </ListItem>
         {historyData.lastWeek.map((item, index) => (
           <ListItem
@@ -155,7 +176,6 @@ const DrawerComponent = () => {
         ))}
       </List>
       <Divider />
-      {/* Dummy data section for recent chats */}
       <Box sx={{ padding: 1 }}>
         <Typography variant="subtitle1" primaryTypographyProps={{ fontSize: "13px" }}>
           Recent Chats
