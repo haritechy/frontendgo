@@ -186,7 +186,7 @@ function ChatApp() {
             }}
             onClick={() => console.log("KaraiGPT button clicked")}
           >
-            Karai ChatBot
+            KaraiChatBot
           </Button>
 
           <Typography

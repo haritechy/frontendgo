@@ -173,9 +173,10 @@ const ChatComponent = ({
               position: "fixed",
               bottom: 18,
               width: {
-                xs: "90%",
-                lg: "70%",
-                xl: "70%",
+          
+                xs: "80vw",
+                lg: "70vw",
+                xl: "70vw",
               },
               bgcolor: "#f5f5f5",
               borderRadius: 10,
