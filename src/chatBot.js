@@ -35,7 +35,8 @@ import Build from "@mui/icons-material/Build";
 import LogoutOutlined from "@mui/icons-material/LogoutOutlined";
 
 const drawerWidth = 240;
-const BOT_API_URL = "http://localhost:8080/generate";
+const BOT_API_URL = "https://goservice.krishdevops.xyz/generate"; 
+const DB_BOT_URL="https://goservice.krishdevops.xyz/get-response"
 const BOT_IMG =logo
 const PERSON_IMG =
   "https://www.shutterstock.com/image-photo/young-handsome-man-beard-wearing-260nw-1768126784.jpg";
