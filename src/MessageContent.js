@@ -25,23 +25,28 @@ const ChatComponent = ({
     return text.startsWith("**") && text.endsWith("**");
   };
 
+  const isProgrammingbox = (text) => {
+    return text.startsWith("```");
+  };
+
   const formatText = (text) => {
-   
     if (isBoldText(text)) {
       return text.slice(2, -2); 
+    }
+    if (isProgrammingbox(text)) {
+      return text.slice(3, -3); 
     }
     return text; 
   };
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="md" sx={{ mt: { xs: 6, sm: 8 }, p: 0 }}>
       <Box
         component="main"
         sx={{
           flexGrow: 1,
           p: { xs: 2, sm: 3 },
-          width: { xs: "100%", sm: "100%" },
-          mt: { xs: 6, sm: 8 },
+          width: "100%",
         }}
       >
         {messages.length === 1 && (
@@ -88,7 +93,7 @@ const ChatComponent = ({
                 >
                   <Box
                     display="flex"
-                    alignItems="center"
+                  
                     flexDirection={msg.side === "right" ? "row-reverse" : "row"}
                   >
                     <Avatar
@@ -104,32 +109,40 @@ const ChatComponent = ({
                     <Paper
                       elevation={0}
                       sx={{
-                        bgcolor: msg.side === "right" ? "#f1f1f1" : "",
+                        bgcolor: isProgrammingbox(msg.text) ? "black" : (msg.side === "right" ? "#f1f1f1" : ""),
+                        width: {
+                          xs: msg.side === "right" ? "100%" : "80%",
+                        },
                         p: 2,
                         borderRadius: 2,
-                        maxWidth: "70%",
-                        color: "black", 
-                        mt: 1, 
+                        color: isProgrammingbox(msg.text) ? "white" : "black",
+                        mt: 1,
                       }}
                     >
                       <ListItemText
                         primary={msg.name}
                         secondary={
-                          msg.text
-                            .split("\n")
-                            .map((line, index) => (
+                          isProgrammingbox(msg.text) ? (
+                            <div style={{ overflow: 'auto', width: "100%", color: 'white', backgroundColor: "black" }}>
+                              <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>
+                                {msg.text}
+                              </pre>
+                            </div>
+                          ) : (
+                            msg.text.split("\n").map((line, index) => (
                               <div
                                 key={index}
                                 style={{
                                   textAlign: "start",
                                   lineHeight: 1.8,
-                                  fontWeight: isBoldText(line) ? "bold" : "normal", // Set font weight based on bold check
-                                  color: "black", 
+                                  fontWeight: isBoldText(line) ? "bold" : "normal",
+                                  color: "black",
                                 }}
                               >
-                                {formatText(line)} {/* Format text to remove asterisks */}
+                                {formatText(line)}
                               </div>
                             ))
+                          )
                         }
                       />
                       <Typography
@@ -147,15 +160,8 @@ const ChatComponent = ({
               ))}
 
               {isBotTyping && (
-                <ListItem
-                  alignItems="flex-start"
-                  sx={{ justifyContent: "flex-start" }}
-                >
-                  <Avatar
-                    alt={"Bot"}
-                    src={logo}
-                    sx={{ marginRight: 2 }}
-                  />
+                <ListItem alignItems="flex-start" sx={{ justifyContent: "flex-start" }}>
+                  <Avatar alt={"Bot"} src={logo} sx={{ marginRight: 2 }} />
                   <CircularProgress size={24} />
                 </ListItem>
               )}
@@ -171,12 +177,11 @@ const ChatComponent = ({
             onChange={(e) => setInputValue(e.target.value)}
             sx={{
               position: "fixed",
-              bottom: 18,
+              bottom: 0,
               width: {
-          
                 xs: "80vw",
-                lg: "70vw",
-                xl: "70vw",
+                lg: "60vw",
+                xl: "60vw",
               },
               bgcolor: "#f5f5f5",
               borderRadius: 10,
