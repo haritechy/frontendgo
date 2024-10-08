@@ -18,10 +18,9 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useTheme } from "@mui/material/styles";
-import logo from "../src/logo1.png";
-import "./ChatApp.css";
-import ChatComponent from "./MessageContent";
-import DrawerComponent from "./DrawerContent";
+import logo from "../src/assets/logo1.png"
+import ChatComponent from "./components/chatcomponent/MessageContent";
+import DrawerComponent from "./components/chatcomponent/DrawerContent";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import Logout from "@mui/icons-material/Logout";
 import {
@@ -308,6 +307,7 @@ function ChatApp() {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
+      
         }}
       >
         <ChatComponent

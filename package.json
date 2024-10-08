@@ -13,9 +13,12 @@
     "@testing-library/user-event": "^13.5.0",
     "@toolpad/core": "^0.7.0",
     "chatbotfrontend": "file:",
+    "dotenv": "^16.4.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.2",
     "react-scripts": "5.0.1",
+    "react-toastify": "^10.0.5",
     "styled-components": "^6.1.13",
     "web-vitals": "^2.1.4"
   },
