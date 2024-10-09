@@ -7,7 +7,10 @@ import {
   Divider,
   Typography,
   ListItemIcon,
+  Collapse,
 } from "@mui/material";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
 import ExploreOutlined from "@mui/icons-material/ExploreOutlined";
 import Assistant from "@mui/icons-material/Assistant";
 import { useAuth } from "../../context/AuthProvider";
@@ -22,8 +25,18 @@ const DrawerComponent = ({ onChatSelect }) => {
   const [categorizedHistory, setCategorizedHistory] = useState({
     today: [],
     yesterday: [],
+    thisWeek: [],
     lastWeek: [],
     lastMonth: [],
+  });
+
+  // State to manage collapsible sections
+  const [openSections, setOpenSections] = useState({
+    today: true,
+    yesterday: false,
+    thisWeek: false,
+    lastWeek: false,
+    lastMonth: false,
   });
 
   const handleChatSelect = (chat) => {
@@ -39,6 +52,12 @@ const DrawerComponent = ({ onChatSelect }) => {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     return date.toDateString() === yesterday.toDateString();
+  };
+
+  const isThisWeek = (date) => {
+    const today = new Date();
+    const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+    return date >= startOfWeek && isWithinLastWeek(date);
   };
 
   const isWithinLastWeek = (date) => {
@@ -58,6 +77,7 @@ const DrawerComponent = ({ onChatSelect }) => {
   const categorizeHistory = (history) => {
     const today = [];
     const yesterday = [];
+    const thisWeek = [];
     const lastWeek = [];
     const lastMonth = [];
 
@@ -67,6 +87,8 @@ const DrawerComponent = ({ onChatSelect }) => {
         today.push(chat);
       } else if (isYesterday(chatDate)) {
         yesterday.push(chat);
+      } else if (isThisWeek(chatDate)) {
+        thisWeek.push(chat);
       } else if (isWithinLastWeek(chatDate)) {
         lastWeek.push(chat);
       } else if (isWithinLastMonth(chatDate)) {
@@ -74,7 +96,7 @@ const DrawerComponent = ({ onChatSelect }) => {
       }
     });
 
-    setCategorizedHistory({ today, yesterday, lastWeek, lastMonth });
+    setCategorizedHistory({ today, yesterday, thisWeek, lastWeek, lastMonth });
   };
 
   const getChatHistory = async () => {
@@ -96,6 +118,13 @@ const DrawerComponent = ({ onChatSelect }) => {
   useEffect(() => {
     getChatHistory();
   }, []);
+
+  const toggleSection = (section) => {
+    setOpenSections((prevOpenSections) => ({
+      ...prevOpenSections,
+      [section]: !prevOpenSections[section],
+    }));
+  };
 
   return (
     <Box
@@ -145,130 +174,147 @@ const DrawerComponent = ({ onChatSelect }) => {
         </ListItem>
       </List>
       <Divider />
-      
+
       {/* Today Section */}
       <List>
-        <ListItem 
-          button
-          sx={{
+        <ListItem button onClick={() => toggleSection('today')}  sx={{
             borderRadius: 4,
             "&:hover": {
               backgroundColor: "rgba(0, 0, 0, 0.1)",
             },
-          }}
-        >
-          <ListItemText
-            primary="Today"
-            primaryTypographyProps={{ fontSize: "13px" }}
-          />
+          }}>
+          <ListItemText primary="Today" primaryTypographyProps={{ fontSize: "13px" }} />
+          {openSections.today ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
-        <Divider />
-        {categorizedHistory.today.map((chat, index) => (
-          <ListItem 
-            key={index}  
-            onClick={() => handleChatSelect(chat)} // Add click handler
-            sx={{
+        <Collapse in={openSections.today} timeout="auto" unmountOnExit>
+          {categorizedHistory.today.map((chat, index) => (
+            <ListItem key={index} onClick={() => handleChatSelect(chat)} sx={{
               borderRadius: 4,
               "&:hover": {
                 backgroundColor: "rgba(0, 0, 0, 0.1)",
               },
-            }}
-          >
-            <ListItemText
-              primary={chat.prompt || 'No message'}
-              secondary={new Date(chat.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            />
-          </ListItem>
-        ))}
+            }}>
+              <ListItemText
+                primary={chat.prompt || 'No message'}
+                secondary={new Date(chat.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              />
+            </ListItem>
+          ))}
+        </Collapse>
       </List>
       <Divider />
 
       {/* Yesterday Section */}
       <List>
-        <ListItem
-          button
-          sx={{
-            borderRadius: 4,
-            "&:hover": {
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
-            },
-          }}
-        >
-          <ListItemText
-            primary="Yesterday"
-            primaryTypographyProps={{ fontSize: "13px" }}
-          />
-        </ListItem>
-        <Divider />
-        {categorizedHistory.yesterday.map((chat, index) => (
-          <ListItem  key={index}     onClick={() => handleChatSelect(chat)} sx={{
+        <ListItem button onClick={() => toggleSection('yesterday')}  sx={{
             borderRadius: 4,
             "&:hover": {
               backgroundColor: "rgba(0, 0, 0, 0.1)",
             },
           }}>
-            <ListItemText 
-              primary={chat.prompt || 'No message'}
-              secondary="Yesterday"
-            />
-          </ListItem>
-        ))}
+          <ListItemText primary="Yesterday" primaryTypographyProps={{ fontSize: "13px" }} />
+          {openSections.yesterday ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>
+        <Collapse in={openSections.yesterday} timeout="auto" unmountOnExit  >
+          {categorizedHistory.yesterday.map((chat, index) => (
+            <ListItem key={index} onClick={() => handleChatSelect(chat)}   sx={{
+              borderRadius: 4,
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.1)",
+              },
+            }}>
+              <ListItemText primary={chat.prompt || 'No message'} secondary="Yesterday"   />
+            </ListItem>
+          ))}
+        </Collapse>
+      </List>
+      <Divider />
+
+      {/* This Week Section */}
+      <List>
+        <ListItem button onClick={() => toggleSection('thisWeek')}  sx={{
+            borderRadius: 4,
+            "&:hover": {
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
+            },
+          }}>
+          <ListItemText primary="This Week" primaryTypographyProps={{ fontSize: "13px" }} />
+          {openSections.thisWeek ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>
+        <Collapse in={openSections.thisWeek} timeout="auto" unmountOnExit>
+          {categorizedHistory.thisWeek.map((chat, index) => (
+            <ListItem key={index} onClick={() => handleChatSelect(chat)}  sx={{
+              borderRadius: 4,
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.1)",
+              },
+            }}>
+              <ListItemText
+                primary={chat.prompt || 'No message'}
+                secondary={new Date(chat.created_at).toLocaleDateString('en-US', { weekday: 'long' })}
+              />
+            </ListItem>
+          ))}
+        </Collapse>
       </List>
       <Divider />
 
       {/* Last Week Section */}
       <List>
-        <ListItem
-          button
-          sx={{
-            borderRadius: 4,
-            "&:hover": {
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
-            },
-          }}
-        >
-          <ListItemText
-            primary="Last Week"
-            primaryTypographyProps={{ fontSize: "13px" }}
-          />
-        </ListItem>
-        <Divider />
-        {categorizedHistory.lastWeek.map((chat, index) => (
-          <ListItem onClick={() => handleChatSelect(chat)} key={index}  sx={{
+        <ListItem button onClick={() => toggleSection('lastWeek')}  sx={{
             borderRadius: 4,
             "&:hover": {
               backgroundColor: "rgba(0, 0, 0, 0.1)",
             },
           }}>
-            <ListItemText
-              primary={chat.prompt || 'No message'}
-              secondary={new Date(chat.created_at).toLocaleDateString('en-US', { weekday: 'long' })}
-            />
-          </ListItem>
-        ))}
+          <ListItemText primary="Last Week" primaryTypographyProps={{ fontSize: "13px" }} />
+          {openSections.lastWeek ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>
+        <Collapse in={openSections.lastWeek} timeout="auto" unmountOnExit>
+          {categorizedHistory.lastWeek.map((chat, index) => (
+            <ListItem key={index} onClick={() => handleChatSelect(chat) } sx={{
+              borderRadius: 4,
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.1)",
+              },
+            }}>
+              <ListItemText
+                primary={chat.prompt || 'No message'}
+                secondary={new Date(chat.created_at).toLocaleDateString('en-US', { weekday: 'long' })}
+              />
+            </ListItem>
+          ))}
+        </Collapse>
       </List>
       <Divider />
 
       {/* Last Month Section */}
       <List>
-        <ListItem
-          button
-          sx={{
+        <ListItem button onClick={() => toggleSection('lastMonth')}  sx={{
             borderRadius: 4,
             "&:hover": {
               backgroundColor: "rgba(0, 0, 0, 0.1)",
             },
-          }}
-        >
-          <ListItemText
-            primary="Last Month"
-            primaryTypographyProps={{ fontSize: "13px" }}
-          />
+          }}>
+          <ListItemText primary="Last Month" primaryTypographyProps={{ fontSize: "13px" }} />
+          {openSections.lastMonth ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
-        <Divider />
-       
+        <Collapse in={openSections.lastMonth} timeout="auto" unmountOnExit>
+          {categorizedHistory.lastMonth.map((chat, index) => (
+            <ListItem key={index} onClick={() => handleChatSelect(chat)} sx={{
+              borderRadius: 4,
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.1)",
+              },
+            }}>
+              <ListItemText
+                primary={chat.prompt || 'No message'}
+                secondary={new Date(chat.created_at).toLocaleDateString()}
+              />
+            </ListItem>
+          ))}
+        </Collapse>
       </List>
-      <Divider />
     </Box>
   );
 };

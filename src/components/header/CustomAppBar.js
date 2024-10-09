@@ -11,6 +11,7 @@ import {
   Divider,
   ListItemIcon,
   ListItemText,
+  useMediaQuery,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
@@ -21,28 +22,42 @@ import {
   LogoutOutlined,
 } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthProvider";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
+import { useTheme } from "@mui/material/styles";
 
 const PERSON_NAME = "Hariharan";
 
 const CustomAppBar = ({ toggleDrawer }) => {
   const [menuAnchor, setMenuAnchor] = useState(null);
-  const { fullname } = useAuth(); 
-  const navigate = useNavigate(); 
+  const { fullname } = useAuth();
+  const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); 
+  
   const handleMenuOpen = (event) => {
     setMenuAnchor(event.currentTarget);
   };
+
   const handleMenuClose = () => {
     setMenuAnchor(null);
   };
+
   const handleLogout = () => {
     localStorage.clear();
     navigate("/");
   };
 
   return (
-    <AppBar position="fixed" sx={{ backgroundColor: "white" }} elevation={0.8}>
-      <Toolbar>
+    <AppBar
+      position="fixed"
+      sx={{
+        backgroundColor: "white",
+  
+        boxShadow: "none",
+      }}
+      elevation={0.8}
+    >
+      <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
         <IconButton
           color="inherit"
           edge="start"
@@ -52,31 +67,26 @@ const CustomAppBar = ({ toggleDrawer }) => {
           <MenuIcon />
         </IconButton>
 
-        <Button
-          variant="outlined"
-          sx={{
-            border: "none",
-            color: "gray",
-            textTransform: "none",
-            fontWeight: "bold",
-            fontSize: { xs: "16px", sm: "20px" },
-            ml: { xs: 10, sm: 30 },
-          }}
-          onClick={() => console.log("KaraiGPT button clicked")}
-        >
-          KaraiChatBot
-        </Button>
+     
+          <Button
+            variant="outlined"
+            sx={{
+              border: "none",
+              color: "gray",
+              textTransform: "none",
+              fontWeight: "bold",
+              fontSize: { xs: "16px", sm: "20px" },
+            }}
+            onClick={() => console.log("KaraiGPT button clicked")}
+          >
+            KaraiChatBot
+          </Button>
+     
 
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{ flexGrow: 1, textAlign: "center", display: { xs: "none", sm: "flex" } }}
-        >
-          Chat Application
-        </Typography>
-
-        <IconButton onClick={handleMenuOpen} color="inherit"  >
-          <Avatar sx={{ bgcolor: "red" }}>{fullname ? fullname[0].toUpperCase() : "H"}</Avatar> 
+        <IconButton onClick={handleMenuOpen} color="inherit">
+          <Avatar sx={{ bgcolor: "red" }}>
+            {fullname ? fullname[0].toUpperCase() : "H"}
+          </Avatar>
         </IconButton>
 
         <Menu
@@ -113,7 +123,7 @@ const CustomAppBar = ({ toggleDrawer }) => {
             <ListItemText primary="My GPT" />
           </MenuItem>
           <Divider />
-          <MenuItem onClick={handleLogout}> 
+          <MenuItem onClick={handleLogout}>
             <ListItemIcon>
               <LogoutOutlined fontSize="small" />
             </ListItemIcon>
