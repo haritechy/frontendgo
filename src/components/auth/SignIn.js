@@ -130,12 +130,15 @@ export default function AuthForm({ modes = "signup" }) {
       if (showSignIn) {
         await login(userDetails.email, userDetails.password);
         toast.success('Successfully signed in!');
+        navigate("/chat");  
       } else {
         await signup(userDetails.fullname, userDetails.email, userDetails.password);
         toast.success('Account created successfully!');
+        setShowSignIn(true);
+
       }
   
-      navigate("/chat");  // Navigate on success
+   
     } catch (error) {
       toast.error("An error occurred. Please try again.");
     }

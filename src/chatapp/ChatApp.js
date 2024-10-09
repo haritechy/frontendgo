@@ -22,13 +22,16 @@ const ChatApp = () => {
   const [selectedChat, setSelectedChat] = useState(null);
   
   const handleChatSelect = (chat) => {
-    setSelectedChat(chat); // Update the selected chat
+    setSelectedChat(chat); 
   };
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
 
   const toggleDrawer = () => {
     setMobileOpen(!mobileOpen);
+  };
+  const onCloseDrawer = () => {
+    setMobileOpen(false); // Close the drawer
   };
   const [messages, setMessages] = useState([
     {
@@ -132,7 +135,7 @@ const ChatApp = () => {
               },
             }}
           >
-            <DrawerComponent   onChatSelect={handleChatSelect} />
+            <DrawerComponent  onCloseDrawer={onCloseDrawer}  onChatSelect={handleChatSelect}  />
           </Drawer>
         )}
       </Box>

@@ -17,7 +17,7 @@ import { useAuth } from "../../context/AuthProvider";
 
 const drawerWidth = 240;
 
-const DrawerComponent = ({ onChatSelect }) => {
+const DrawerComponent = ({ onChatSelect, onCloseDrawer }) => {
   const { fetchchatHistory } = useAuth();
   const [chatHistory, setChatHistory] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,7 +40,8 @@ const DrawerComponent = ({ onChatSelect }) => {
   });
 
   const handleChatSelect = (chat) => {
-    onChatSelect(chat); 
+    onChatSelect(chat);
+    onCloseDrawer(); 
   };
 
   const isToday = (date) => {
@@ -106,7 +107,7 @@ const DrawerComponent = ({ onChatSelect }) => {
         throw new Error('No chat history available');
       }
       setChatHistory(history);
-      categorizeHistory(history); 
+      categorizeHistory(history);
     } catch (err) {
       console.error('Error fetching chat history:', err);
       setError('Failed to load chat history');
@@ -177,23 +178,31 @@ const DrawerComponent = ({ onChatSelect }) => {
 
       {/* Today Section */}
       <List>
-        <ListItem button onClick={() => toggleSection('today')}  sx={{
+        <ListItem
+          button
+          onClick={() => toggleSection('today')}
+          sx={{
             borderRadius: 4,
             "&:hover": {
               backgroundColor: "rgba(0, 0, 0, 0.1)",
             },
-          }}>
+          }}
+        >
           <ListItemText primary="Today" primaryTypographyProps={{ fontSize: "13px" }} />
           {openSections.today ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
         <Collapse in={openSections.today} timeout="auto" unmountOnExit>
           {categorizedHistory.today.map((chat, index) => (
-            <ListItem key={index} onClick={() => handleChatSelect(chat)} sx={{
-              borderRadius: 4,
-              "&:hover": {
-                backgroundColor: "rgba(0, 0, 0, 0.1)",
-              },
-            }}>
+            <ListItem
+              key={index}
+              onClick={() => handleChatSelect(chat)}
+              sx={{
+                borderRadius: 4,
+                "&:hover": {
+                  backgroundColor: "rgba(0, 0, 0, 0.1)",
+                },
+              }}
+            >
               <ListItemText
                 primary={chat.prompt || 'No message'}
                 secondary={new Date(chat.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -206,24 +215,32 @@ const DrawerComponent = ({ onChatSelect }) => {
 
       {/* Yesterday Section */}
       <List>
-        <ListItem button onClick={() => toggleSection('yesterday')}  sx={{
+        <ListItem
+          button
+          onClick={() => toggleSection('yesterday')}
+          sx={{
             borderRadius: 4,
             "&:hover": {
               backgroundColor: "rgba(0, 0, 0, 0.1)",
             },
-          }}>
+          }}
+        >
           <ListItemText primary="Yesterday" primaryTypographyProps={{ fontSize: "13px" }} />
           {openSections.yesterday ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
-        <Collapse in={openSections.yesterday} timeout="auto" unmountOnExit  >
+        <Collapse in={openSections.yesterday} timeout="auto" unmountOnExit>
           {categorizedHistory.yesterday.map((chat, index) => (
-            <ListItem key={index} onClick={() => handleChatSelect(chat)}   sx={{
-              borderRadius: 4,
-              "&:hover": {
-                backgroundColor: "rgba(0, 0, 0, 0.1)",
-              },
-            }}>
-              <ListItemText primary={chat.prompt || 'No message'} secondary="Yesterday"   />
+            <ListItem
+              key={index}
+              onClick={() => handleChatSelect(chat)}
+              sx={{
+                borderRadius: 4,
+                "&:hover": {
+                  backgroundColor: "rgba(0, 0, 0, 0.1)",
+                },
+              }}
+            >
+              <ListItemText primary={chat.prompt || 'No message'} secondary="Yesterday" />
             </ListItem>
           ))}
         </Collapse>
@@ -232,23 +249,31 @@ const DrawerComponent = ({ onChatSelect }) => {
 
       {/* This Week Section */}
       <List>
-        <ListItem button onClick={() => toggleSection('thisWeek')}  sx={{
+        <ListItem
+          button
+          onClick={() => toggleSection('thisWeek')}
+          sx={{
             borderRadius: 4,
             "&:hover": {
               backgroundColor: "rgba(0, 0, 0, 0.1)",
             },
-          }}>
+          }}
+        >
           <ListItemText primary="This Week" primaryTypographyProps={{ fontSize: "13px" }} />
           {openSections.thisWeek ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
         <Collapse in={openSections.thisWeek} timeout="auto" unmountOnExit>
           {categorizedHistory.thisWeek.map((chat, index) => (
-            <ListItem key={index} onClick={() => handleChatSelect(chat)}  sx={{
-              borderRadius: 4,
-              "&:hover": {
-                backgroundColor: "rgba(0, 0, 0, 0.1)",
-              },
-            }}>
+            <ListItem
+              key={index}
+              onClick={() => handleChatSelect(chat)}
+              sx={{
+                borderRadius: 4,
+                "&:hover": {
+                  backgroundColor: "rgba(0, 0, 0, 0.1)",
+                },
+              }}
+            >
               <ListItemText
                 primary={chat.prompt || 'No message'}
                 secondary={new Date(chat.created_at).toLocaleDateString('en-US', { weekday: 'long' })}
@@ -261,27 +286,32 @@ const DrawerComponent = ({ onChatSelect }) => {
 
       {/* Last Week Section */}
       <List>
-        <ListItem button onClick={() => toggleSection('lastWeek')}  sx={{
+        <ListItem
+          button
+          onClick={() => toggleSection('lastWeek')}
+          sx={{
             borderRadius: 4,
             "&:hover": {
               backgroundColor: "rgba(0, 0, 0, 0.1)",
             },
-          }}>
+          }}
+        >
           <ListItemText primary="Last Week" primaryTypographyProps={{ fontSize: "13px" }} />
           {openSections.lastWeek ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
         <Collapse in={openSections.lastWeek} timeout="auto" unmountOnExit>
           {categorizedHistory.lastWeek.map((chat, index) => (
-            <ListItem key={index} onClick={() => handleChatSelect(chat) } sx={{
-              borderRadius: 4,
-              "&:hover": {
-                backgroundColor: "rgba(0, 0, 0, 0.1)",
-              },
-            }}>
-              <ListItemText
-                primary={chat.prompt || 'No message'}
-                secondary={new Date(chat.created_at).toLocaleDateString('en-US', { weekday: 'long' })}
-              />
+            <ListItem
+              key={index}
+              onClick={() => handleChatSelect(chat)}
+              sx={{
+                borderRadius: 4,
+                "&:hover": {
+                  backgroundColor: "rgba(0, 0, 0, 0.1)",
+                },
+              }}
+            >
+              <ListItemText primary={chat.prompt || 'No message'} secondary="Last Week" />
             </ListItem>
           ))}
         </Collapse>
@@ -290,27 +320,32 @@ const DrawerComponent = ({ onChatSelect }) => {
 
       {/* Last Month Section */}
       <List>
-        <ListItem button onClick={() => toggleSection('lastMonth')}  sx={{
+        <ListItem
+          button
+          onClick={() => toggleSection('lastMonth')}
+          sx={{
             borderRadius: 4,
             "&:hover": {
               backgroundColor: "rgba(0, 0, 0, 0.1)",
             },
-          }}>
+          }}
+        >
           <ListItemText primary="Last Month" primaryTypographyProps={{ fontSize: "13px" }} />
           {openSections.lastMonth ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
         <Collapse in={openSections.lastMonth} timeout="auto" unmountOnExit>
           {categorizedHistory.lastMonth.map((chat, index) => (
-            <ListItem key={index} onClick={() => handleChatSelect(chat)} sx={{
-              borderRadius: 4,
-              "&:hover": {
-                backgroundColor: "rgba(0, 0, 0, 0.1)",
-              },
-            }}>
-              <ListItemText
-                primary={chat.prompt || 'No message'}
-                secondary={new Date(chat.created_at).toLocaleDateString()}
-              />
+            <ListItem
+              key={index}
+              onClick={() => handleChatSelect(chat)}
+              sx={{
+                borderRadius: 4,
+                "&:hover": {
+                  backgroundColor: "rgba(0, 0, 0, 0.1)",
+                },
+              }}
+            >
+              <ListItemText primary={chat.prompt || 'No message'} secondary="Last Month" />
             </ListItem>
           ))}
         </Collapse>
