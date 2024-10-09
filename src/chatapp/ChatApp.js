@@ -120,7 +120,7 @@ const ChatApp = () => {
               },
             }}
           >
-            <DrawerComponent  onChatSelect={handleChatSelect}/>
+            <DrawerComponent  onChatSelect={handleChatSelect} onCloseDrawer={onCloseDrawer}/>
           </Drawer>
         )}
         {!isLargeScreen && (
